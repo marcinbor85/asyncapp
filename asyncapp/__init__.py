@@ -26,6 +26,6 @@
 
 from asyncapp.core import AsyncApp
 
-__version__ = '0.1.0'
+__version__ = '0.1.5'
 __appname__ = 'asyncapp'
 __description__ = 'Simple object-oriented asynchronous application wrapper.'

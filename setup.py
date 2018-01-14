@@ -40,11 +40,11 @@ setup(
     author = "Marcin Borowicz",
     author_email = "marcinbor85@gmail.com",
     description = (__description__),
+    long_description=read('DESCRIPTION'),
     license = "MIT",
     keywords = "asyncapp asynchronous wrapper async app framework template skeleton",
     url = "https://github.com/marcinbor85/asyncapp",
     packages=['asyncapp'],
-    long_description=read('DESCRIPTION'),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",
