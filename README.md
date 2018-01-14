@@ -14,7 +14,7 @@ sudo pip install asyncapp
 ```
 
 ## Usage:
-```
+```python
 from asyncapp import AsyncApp
 
 import asyncio
