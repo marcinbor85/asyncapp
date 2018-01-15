@@ -31,7 +31,7 @@ class AsyncServer():
         self._app = app
         self._loop = app.get_loop()
         self._close_force = False
-        coro = asyncio.start_server(self._service, *args, loop=self._loop, **kwargs)
+        coro = asyncio.start_server(self._on_connect, *args, loop=self._loop, **kwargs)
         self._server = self._loop.run_until_complete(coro)
 
     def close(self):
@@ -44,7 +44,7 @@ class AsyncServer():
     async def service(self, reader, writer):
         pass
 
-    async def _service(self, reader, writer):
+    async def _on_connect(self, reader, writer):
         try:
             while self._app.is_run() and not self._close_force:
                 await self.service(reader, writer)
