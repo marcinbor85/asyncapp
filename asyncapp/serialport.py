@@ -24,10 +24,23 @@
 # THE SOFTWARE.
 #
 
-from asyncapp.core import AsyncApp
-from asyncapp.server import AsyncServer
-from asyncapp.serialport import AsyncSerial
+import asyncio
+import concurrent
+import serial
 
-__version__ = '0.2.0'
-__appname__ = 'asyncapp'
-__description__ = 'Simple object-oriented asynchronous application wrapper.'
+class AsyncSerial(serial.Serial):
+    def __init__(self, app, *args, **kwargs):
+        super(AsyncSerial, self).__init__(*args, **kwargs)
+        self._app = app
+        self._loop = app.get_loop()
+
+    async def read(self, size=1):
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            res = await self._loop.run_in_executor(executor, lambda: super(AsyncSerial, self).read(size))
+            return res
+
+    async def write(self, data):
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            res = await self._loop.run_in_executor(executor, lambda: super(AsyncSerial, self).write(data))
+            return res
+

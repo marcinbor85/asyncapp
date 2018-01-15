@@ -24,10 +24,32 @@
 # THE SOFTWARE.
 #
 
-from asyncapp.core import AsyncApp
-from asyncapp.server import AsyncServer
-from asyncapp.serialport import AsyncSerial
+import asyncio
 
-__version__ = '0.2.0'
-__appname__ = 'asyncapp'
-__description__ = 'Simple object-oriented asynchronous application wrapper.'
+class AsyncServer():
+    def __init__(self, app, *args, **kwargs):
+        self._app = app
+        self._loop = app.get_loop()
+        self._close_force = False
+        coro = asyncio.start_server(self._service, *args, loop=self._loop, **kwargs)
+        self._server = self._loop.run_until_complete(coro)
+
+    def close(self):
+        self._close_force = True
+
+    def stop(self):
+        self._server.close()
+        self._loop.run_until_complete(self._server.wait_closed())
+
+    async def service(self, reader, writer):
+        pass
+
+    async def _service(self, reader, writer):
+        try:
+            while self._app.is_run() and not self._close_force:
+                await self.service(reader, writer)
+        finally:
+            writer.close()
+            self._close_force = False
+
+

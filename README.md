@@ -7,6 +7,7 @@ Simple object-oriented asynchronous application wrapper.
 - Python3 compatible
 - Simplified and robust stopping of coroutines
 - No warnings during application stopping (a common newbies issue)
+- Some simplified IO async tools like tcp server and serial port
 
 ## Library instalation
 ```

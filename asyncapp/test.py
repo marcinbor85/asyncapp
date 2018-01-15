@@ -25,16 +25,34 @@
 #
 
 from asyncapp import AsyncApp
+from asyncapp import AsyncServer
 
 import asyncio
 
+class TestAsyncServer(AsyncServer):
+    async def service(self, reader, writer):
+        try:
+            data = await asyncio.wait_for(reader.read(100), timeout=1)
+        except asyncio.TimeoutError:
+            return
+        if data[0] == ord('q'):
+            self.close()
+            return
+        writer.write(data)
+        try:
+            data = await asyncio.wait_for(writer.drain(), timeout=1)
+        except asyncio.TimeoutError:
+            return
+
 class TestAsyncApp(AsyncApp):
     def on_start(self, loop):
-        asyncio.ensure_future(self.my_loop('fast', 4, 0.3))
-        asyncio.ensure_future(self.my_loop('slow', 2, 1.0))
+        asyncio.ensure_future(self.my_loop('fast', 40, 0.3))
+        asyncio.ensure_future(self.my_loop('slow', 20, 1.0))
+        self.server = TestAsyncServer(self, '127.0.0.1', 8080)
         print('started')
 
     def on_stop(self, loop):
+        self.server.stop()
         print('stopped')
 
     async def my_loop(self, name, iters, delay):
